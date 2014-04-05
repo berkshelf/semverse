@@ -24,5 +24,6 @@ end
 
 group :test do
   gem "spork"
+  gem "rake"
   gem "rspec"
 end
