@@ -1,6 +1,8 @@
 # Semverse
+[![Gem Version](http://img.shields.io/gem/v/semverse.svg)][gem]
+[![Build Status](http://img.shields.io/travis/berkshelf/semverse.svg)][travis]
 
-TODO: Write a gem description
+An elegant library for representing and comparing SemVer versions and constraints
 
 ## Installation
 
@@ -22,7 +24,7 @@ TODO: Write usage instructions here
 
 ## Contributing
 
-1. Fork it ( http://github.com/<my-github-username>/semverse/fork )
+1. Fork it ( http://github.com/berkshelf/semverse/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
