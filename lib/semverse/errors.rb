@@ -26,4 +26,6 @@ module Semverse
       "'#{constraint}' did not contain a valid operator or a valid version string."
     end
   end
+
+  class NoSolutionError < SemverseError; end
 end

@@ -46,7 +46,7 @@ module Semverse
         solution = satisfy_all(constraints, versions)
 
         if solution.empty?
-          raise Errors::NoSolutionError
+          raise NoSolutionError
         end
 
         solution.sort.last
