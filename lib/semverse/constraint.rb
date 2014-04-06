@@ -14,6 +14,44 @@ module Semverse
         end
       end
 
+      # Returns all of the versions which satisfy all of the given constraints
+      #
+      # @param [Array<Semverse::Constraint>, Array<String>] constraints
+      # @param [Array<Semverse::Version>, Array<String>] versions
+      #
+      # @return [Array<Semverse::Version>]
+      def satisfy_all(constraints, versions)
+        constraints = Array(constraints).collect do |con|
+          con.is_a?(Constraint) ? con : Constraint.new(con)
+        end.uniq
+
+        versions = Array(versions).collect do |ver|
+          ver.is_a?(Version) ? ver : Version.new(ver)
+        end.uniq
+
+        versions.select do |ver|
+          constraints.all? { |constraint| constraint.satisfies?(ver) }
+        end
+      end
+
+      # Return the best version from the given list of versions for the given list of constraints
+      #
+      # @param [Array<Semverse::Constraint>, Array<String>] constraints
+      # @param [Array<Semverse::Version>, Array<String>] versions
+      #
+      # @raise [NoSolutionError] if version matches the given constraints
+      #
+      # @return [Semverse::Version]
+      def satisfy_best(constraints, versions)
+        solution = satisfy_all(constraints, versions)
+
+        if solution.empty?
+          raise Errors::NoSolutionError
+        end
+
+        solution.sort.last
+      end
+
       # Split a constraint string into an Array of two elements. The first
       # element being the operator and second being the version string.
       #
