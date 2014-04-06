@@ -2,6 +2,9 @@
 [![Gem Version](http://img.shields.io/gem/v/semverse.svg)][gem]
 [![Build Status](http://img.shields.io/travis/berkshelf/semverse.svg)][travis]
 
+[gem]: https://rubygems.org/gems/semverse
+[travis]: http://travis-ci.org/berkshelf/semverse
+
 An elegant library for representing and comparing SemVer versions and constraints
 
 ## Installation
