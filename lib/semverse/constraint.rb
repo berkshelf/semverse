@@ -149,7 +149,7 @@ module Semverse
       (\.(?<patch>\d+))?
       (\-(?<prerelease>[0-9A-Za-z\-\.]+))?
       (\+(?<build>[0-9A-Za-z\-\.]+))?
-    \z/x
+    \z/x.freeze
 
     attr_reader :operator
     attr_reader :major
