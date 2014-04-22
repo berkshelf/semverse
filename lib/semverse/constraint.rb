@@ -36,31 +36,20 @@ module Semverse
       #
       # @return [Array, nil]
       def split(constraint)
-        if constraint =~ /^[0-9]/
-          operator = "="
-          version  = constraint
-        else
-          _, operator, version = REGEXP.match(constraint).to_a
-        end
+        data = REGEX.match(constraint)
 
-        if operator.nil?
+        if data.nil?
           raise InvalidConstraintFormat.new(constraint)
-        end
-
-        split_version = case version.to_s
-        when /^(\d+)\.(\d+)\.(\d+)(-([0-9a-z\-\.]+))?(\+([0-9a-z\-\.]+))?$/i
-          [ $1.to_i, $2.to_i, $3.to_i, $5, $7 ]
-        when /^(\d+)\.(\d+)\.(\d+)?$/
-          [ $1.to_i, $2.to_i, $3.to_i, nil, nil ]
-        when /^(\d+)\.(\d+)?$/
-          [ $1.to_i, $2.to_i, nil, nil, nil ]
-        when /^(\d+)$/
-          [ $1.to_i, nil, nil, nil, nil ]
         else
-          raise InvalidConstraintFormat.new(constraint)
+          [
+            data[:operator] || DEFAULT_OPERATOR,
+            data[:major].to_i,
+            data[:minor] && data[:minor].to_i,
+            data[:patch] && data[:patch].to_i,
+            data[:prerelease],
+            data[:build],
+          ]
         end
-
-        [ operator, split_version ].flatten
       end
 
       # @param [Semverse::Constraint] constraint
@@ -126,6 +115,8 @@ module Semverse
       end
     end
 
+    DEFAULT_OPERATOR = '='.freeze
+
     OPERATOR_TYPES = {
       "~>" => :approx,
       "~"  => :approx,
@@ -145,7 +136,20 @@ module Semverse
       equal: method(:compare_equal)
     }.freeze
 
-    REGEXP = /^(#{OPERATOR_TYPES.keys.join('|')})\s?(.+)$/
+    # This is a magical regular expression that matches the Semantic versioning
+    # specification found at http://semver.org. In addition to supporting all
+    # the possible versions, it also provides a named +match_data+ which makes
+    # it really delightful to work with.
+    #
+    # @return [Regexp]
+    REGEX = /\A
+      ((?<operator>(#{OPERATOR_TYPES.keys.join('|')}))[[:space:]]*)?
+      (?<major>\d+)
+      (\.(?<minor>\d+))?
+      (\.(?<patch>\d+))?
+      (\-(?<prerelease>[0-9A-Za-z\-\.]+))?
+      (\+(?<build>[0-9A-Za-z\-\.]+))?
+    \z/x
 
     attr_reader :operator
     attr_reader :major
