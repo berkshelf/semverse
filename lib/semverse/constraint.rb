@@ -130,7 +130,7 @@ module Semverse
     def initialize(constraint = '>= 0.0.0')
       @operator, @major, @minor, @patch, @pre_release, @build = self.class.split(constraint)
 
-      unless operator_type == :approx
+      unless ['~>', '~'].include?(@operator)
         @minor ||= 0
         @patch ||= 0
       end
@@ -144,15 +144,6 @@ module Semverse
       ])
     end
 
-    # @return [Symbol]
-    def operator_type
-      unless type = OPERATOR_TYPES.fetch(operator)
-        raise RuntimeError, "unknown operator type: #{operator}"
-      end
-
-      type
-    end
-
     # Returns true or false if the given version would be satisfied by
     # the version constraint.
     #
@@ -162,9 +153,11 @@ module Semverse
     def satisfies?(target)
       target = Version.coerce(target)
 
-      return false if !version.zero? && greedy_match?(target)
+      if !version.zero? && greedy_match?(target)
+        return false
+      end
 
-      compare(target)
+      OPERATORS[operator].call(self, target)
     end
 
     # dep-selector uses include? to determine if a version matches the
@@ -209,14 +202,9 @@ module Semverse
       # @param [Semverse::Version] target_version
       #
       def greedy_match?(target_version)
-        operator_type !~ /less/ && target_version.pre_release? && !version.pre_release?
-      end
-
-      # @param [Semverse::Version] target
-      #
-      # @return [Boolean]
-      def compare(target)
-        COMPARE_FUNS.fetch(operator_type).call(self, target)
+        !['<', '<='].include?(self.operator) &&
+        target_version.pre_release? &&
+        !version.pre_release?
       end
   end
 end
