@@ -56,46 +56,6 @@ module Semverse
       # @param [Semverse::Version] target_version
       #
       # @return [Boolean]
-      def compare_equal(constraint, target_version)
-        target_version == constraint.version
-      end
-
-      # @param [Semverse::Constraint] constraint
-      # @param [Semverse::Version] target_version
-      #
-      # @return [Boolean]
-      def compare_gt(constraint, target_version)
-        target_version > constraint.version
-      end
-
-      # @param [Semverse::Constraint] constraint
-      # @param [Semverse::Version] target_version
-      #
-      # @return [Boolean]
-      def compare_lt(constraint, target_version)
-        target_version < constraint.version
-      end
-
-      # @param [Semverse::Constraint] constraint
-      # @param [Semverse::Version] target_version
-      #
-      # @return [Boolean]
-      def compare_gte(constraint, target_version)
-        target_version >= constraint.version
-      end
-
-      # @param [Semverse::Constraint] constraint
-      # @param [Semverse::Version] target_version
-      #
-      # @return [Boolean]
-      def compare_lte(constraint, target_version)
-        target_version <= constraint.version
-      end
-
-      # @param [Semverse::Constraint] constraint
-      # @param [Semverse::Version] target_version
-      #
-      # @return [Boolean]
       def compare_approx(constraint, target_version)
         min = constraint.version
         max = if constraint.patch.nil?
@@ -117,23 +77,22 @@ module Semverse
 
     DEFAULT_OPERATOR = '='.freeze
 
-    OPERATOR_TYPES = {
-      "~>" => :approx,
-      "~"  => :approx,
-      ">=" => :greater_than_equal,
-      "<=" => :less_than_equal,
-      "="  => :equal,
-      ">"  => :greater_than,
-      "<"  => :less_than,
-    }.freeze
-
-    COMPARE_FUNS = {
-      approx: method(:compare_approx),
-      greater_than_equal: method(:compare_gte),
-      greater_than: method(:compare_gt),
-      less_than_equal: method(:compare_lte),
-      less_than: method(:compare_lt),
-      equal: method(:compare_equal)
+    # The complete list of possible operators, paired with a proc to be used for
+    # evaluation.
+    #
+    # @example
+    #   OPERATORS['='].call(constraint, version)
+    #
+    # @return [Hash<String, Proc>]
+    OPERATORS = { #:nodoc:
+      '='  => ->(c, v) { v == c.version },
+      '!=' => ->(c, v) { v != c.version },
+      '>'  => ->(c, v) { v >  c.version },
+      '<'  => ->(c, v) { v <  c.version },
+      '>=' => ->(c, v) { v >= c.version },
+      '<=' => ->(c, v) { v <= c.version },
+      '~'  => method(:compare_approx),
+      '~>' => method(:compare_approx),
     }.freeze
 
     # This is a magical regular expression that matches the Semantic versioning
