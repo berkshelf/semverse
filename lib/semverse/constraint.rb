@@ -46,7 +46,7 @@ module Semverse
             data[:major].to_i,
             data[:minor] && data[:minor].to_i,
             data[:patch] && data[:patch].to_i,
-            data[:prerelease],
+            data[:pre_release],
             data[:build],
           ]
         end
@@ -147,7 +147,7 @@ module Semverse
       (?<major>\d+)
       (\.(?<minor>\d+))?
       (\.(?<patch>\d+))?
-      (\-(?<prerelease>[0-9A-Za-z\-\.]+))?
+      (\-(?<pre_release>[0-9A-Za-z\-\.]+))?
       (\+(?<build>[0-9A-Za-z\-\.]+))?
     \z/x.freeze
 
