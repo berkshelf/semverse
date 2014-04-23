@@ -143,7 +143,7 @@ module Semverse
     #
     # @return [Regexp]
     REGEX = /\A
-      ((?<operator>(#{OPERATOR_TYPES.keys.join('|')}))[[:space:]]*)?
+      ((?<operator>(#{OPERATORS.keys.join('|')}))[[:space:]]*)?
       (?<major>\d+)
       (\.(?<minor>\d+))?
       (\.(?<patch>\d+))?
