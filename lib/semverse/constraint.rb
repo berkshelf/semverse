@@ -75,6 +75,9 @@ module Semverse
       end
     end
 
+    # The default constraint string.
+    #
+    # @return [String]
     DEFAULT_OPERATOR = '='.freeze
 
     # The complete list of possible operators, paired with a proc to be used for
