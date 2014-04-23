@@ -127,12 +127,7 @@ module Semverse
     attr_reader :version
 
     # @param [#to_s] constraint
-    def initialize(constraint = nil)
-      constraint = constraint.to_s
-      if constraint.nil? || constraint.empty?
-        constraint = '>= 0.0.0'
-      end
-
+    def initialize(constraint = '>= 0.0.0')
       @operator, @major, @minor, @patch, @pre_release, @build = self.class.split(constraint)
 
       unless operator_type == :approx
