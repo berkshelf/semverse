@@ -224,6 +224,9 @@ module Semverse
     end
     alias_method :eql?, :==
 
+    # The detailed string representation of this constraint.
+    #
+    # @return [String]
     def inspect
       "#<#{self.class.to_s} #{to_s}>"
     end
