@@ -231,6 +231,9 @@ module Semverse
       "#<#{self.class.to_s} #{to_s}>"
     end
 
+    # The string representation of this constraint.
+    #
+    # @return [String]
     def to_s
       out =  "#{operator} #{major}"
       out << ".#{minor}" if minor
