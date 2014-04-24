@@ -74,71 +74,20 @@ module Semverse
       #
       # @return [Array, nil]
       def split(constraint)
-        if constraint =~ /^[0-9]/
-          operator = "="
-          version  = constraint
-        else
-          _, operator, version = REGEXP.match(constraint).to_a
-        end
+        data = REGEX.match(constraint)
 
-        if operator.nil?
+        if data.nil?
           raise InvalidConstraintFormat.new(constraint)
-        end
-
-        split_version = case version.to_s
-        when /^(\d+)\.(\d+)\.(\d+)(-([0-9a-z\-\.]+))?(\+([0-9a-z\-\.]+))?$/i
-          [ $1.to_i, $2.to_i, $3.to_i, $5, $7 ]
-        when /^(\d+)\.(\d+)\.(\d+)?$/
-          [ $1.to_i, $2.to_i, $3.to_i, nil, nil ]
-        when /^(\d+)\.(\d+)?$/
-          [ $1.to_i, $2.to_i, nil, nil, nil ]
-        when /^(\d+)$/
-          [ $1.to_i, nil, nil, nil, nil ]
         else
-          raise InvalidConstraintFormat.new(constraint)
+          [
+            data[:operator] || DEFAULT_OPERATOR,
+            data[:major].to_i,
+            data[:minor] && data[:minor].to_i,
+            data[:patch] && data[:patch].to_i,
+            data[:pre_release],
+            data[:build],
+          ]
         end
-
-        [ operator, split_version ].flatten
-      end
-
-      # @param [Semverse::Constraint] constraint
-      # @param [Semverse::Version] target_version
-      #
-      # @return [Boolean]
-      def compare_equal(constraint, target_version)
-        target_version == constraint.version
-      end
-
-      # @param [Semverse::Constraint] constraint
-      # @param [Semverse::Version] target_version
-      #
-      # @return [Boolean]
-      def compare_gt(constraint, target_version)
-        target_version > constraint.version
-      end
-
-      # @param [Semverse::Constraint] constraint
-      # @param [Semverse::Version] target_version
-      #
-      # @return [Boolean]
-      def compare_lt(constraint, target_version)
-        target_version < constraint.version
-      end
-
-      # @param [Semverse::Constraint] constraint
-      # @param [Semverse::Version] target_version
-      #
-      # @return [Boolean]
-      def compare_gte(constraint, target_version)
-        target_version >= constraint.version
-      end
-
-      # @param [Semverse::Constraint] constraint
-      # @param [Semverse::Version] target_version
-      #
-      # @return [Boolean]
-      def compare_lte(constraint, target_version)
-        target_version <= constraint.version
       end
 
       # @param [Semverse::Constraint] constraint
@@ -164,26 +113,43 @@ module Semverse
       end
     end
 
-    OPERATOR_TYPES = {
-      "~>" => :approx,
-      "~"  => :approx,
-      ">=" => :greater_than_equal,
-      "<=" => :less_than_equal,
-      "="  => :equal,
-      ">"  => :greater_than,
-      "<"  => :less_than,
+    # The default constraint string.
+    #
+    # @return [String]
+    DEFAULT_OPERATOR = '='.freeze
+
+    # The complete list of possible operators, paired with a proc to be used for
+    # evaluation.
+    #
+    # @example
+    #   OPERATORS['='].call(constraint, version)
+    #
+    # @return [Hash<String, Proc>]
+    OPERATORS = { #:nodoc:
+      '='  => ->(c, v) { v == c.version },
+      '!=' => ->(c, v) { v != c.version },
+      '>'  => ->(c, v) { v >  c.version },
+      '<'  => ->(c, v) { v <  c.version },
+      '>=' => ->(c, v) { v >= c.version },
+      '<=' => ->(c, v) { v <= c.version },
+      '~'  => method(:compare_approx),
+      '~>' => method(:compare_approx),
     }.freeze
 
-    COMPARE_FUNS = {
-      approx: method(:compare_approx),
-      greater_than_equal: method(:compare_gte),
-      greater_than: method(:compare_gt),
-      less_than_equal: method(:compare_lte),
-      less_than: method(:compare_lt),
-      equal: method(:compare_equal)
-    }.freeze
-
-    REGEXP = /^(#{OPERATOR_TYPES.keys.join('|')})\s?(.+)$/
+    # This is a magical regular expression that matches the Semantic versioning
+    # specification found at http://semver.org. In addition to supporting all
+    # the possible versions, it also provides a named +match_data+ which makes
+    # it really delightful to work with.
+    #
+    # @return [Regexp]
+    REGEX = /\A
+      ((?<operator>(#{OPERATORS.keys.join('|')}))[[:space:]]*)?
+      (?<major>\d+)
+      (\.(?<minor>\d+))?
+      (\.(?<patch>\d+))?
+      (\-(?<pre_release>[0-9A-Za-z\-\.]+))?
+      (\+(?<build>[0-9A-Za-z\-\.]+))?
+    \z/x.freeze
 
     attr_reader :operator
     attr_reader :major
@@ -199,15 +165,10 @@ module Semverse
     attr_reader :version
 
     # @param [#to_s] constraint
-    def initialize(constraint = nil)
-      constraint = constraint.to_s
-      if constraint.nil? || constraint.empty?
-        constraint = '>= 0.0.0'
-      end
-
+    def initialize(constraint = '>= 0.0.0')
       @operator, @major, @minor, @patch, @pre_release, @build = self.class.split(constraint)
 
-      unless operator_type == :approx
+      unless ['~>', '~'].include?(@operator)
         @minor ||= 0
         @patch ||= 0
       end
@@ -221,15 +182,6 @@ module Semverse
       ])
     end
 
-    # @return [Symbol]
-    def operator_type
-      unless type = OPERATOR_TYPES.fetch(operator)
-        raise RuntimeError, "unknown operator type: #{operator}"
-      end
-
-      type
-    end
-
     # Returns true or false if the given version would be satisfied by
     # the version constraint.
     #
@@ -239,9 +191,11 @@ module Semverse
     def satisfies?(target)
       target = Version.coerce(target)
 
-      return false if !version.zero? && greedy_match?(target)
+      if !version.zero? && greedy_match?(target)
+        return false
+      end
 
-      compare(target)
+      OPERATORS[operator].call(self, target)
     end
 
     # dep-selector uses include? to determine if a version matches the
@@ -258,10 +212,16 @@ module Semverse
     end
     alias_method :eql?, :==
 
+    # The detailed string representation of this constraint.
+    #
+    # @return [String]
     def inspect
       "#<#{self.class.to_s} #{to_s}>"
     end
 
+    # The string representation of this constraint.
+    #
+    # @return [String]
     def to_s
       out =  "#{operator} #{major}"
       out << ".#{minor}" if minor
@@ -280,14 +240,9 @@ module Semverse
       # @param [Semverse::Version] target_version
       #
       def greedy_match?(target_version)
-        operator_type !~ /less/ && target_version.pre_release? && !version.pre_release?
-      end
-
-      # @param [Semverse::Version] target
-      #
-      # @return [Boolean]
-      def compare(target)
-        COMPARE_FUNS.fetch(operator_type).call(self, target)
+        !['<', '<='].include?(self.operator) &&
+        target_version.pre_release? &&
+        !version.pre_release?
       end
   end
 end
