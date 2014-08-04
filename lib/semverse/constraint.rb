@@ -166,6 +166,10 @@ module Semverse
 
     # @param [#to_s] constraint
     def initialize(constraint = '>= 0.0.0')
+      constraint = constraint.to_s
+      if constraint.nil? || constraint.empty?
+        constraint = ">= 0.0.0"
+      end
       @operator, @major, @minor, @patch, @pre_release, @build = self.class.split(constraint)
 
       unless ['~>', '~'].include?(@operator)

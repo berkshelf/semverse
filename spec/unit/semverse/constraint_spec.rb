@@ -33,6 +33,20 @@ describe Semverse::Constraint do
         expect(result.version.to_s).to eq("0.0.0")
       end
 
+      it "falls back to a default constraint if nil is provided" do
+        result = subject.new(nil)
+
+        expect(result.version.to_s).to eq("0.0.0")
+        expect(result.operator).to eq(">=")
+      end
+
+      it "fall sback to a default constraint if a blank string is provided" do
+        result = subject.new("")
+
+        expect(result.version.to_s).to eq("0.0.0")
+        expect(result.operator).to eq(">=")
+      end
+
       context "given a string that does not match the Constraint REGEXP" do
         it "raises an InvalidConstraintFormat error" do
           expect {
