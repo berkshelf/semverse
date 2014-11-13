@@ -25,5 +25,5 @@ end
 group :test do
   gem "spork"
   gem "rake"
-  gem "rspec", "~> 2.99"
+  gem "rspec", "~> 3.0"
 end
