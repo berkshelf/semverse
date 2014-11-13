@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec::Matchers.define :satisfies do |*args|
   match do |constraint|
-    constraint.satisfies?(*args).should be_true
+    constraint.satisfies?(*args).should be true
   end
 end
 
