@@ -305,7 +305,7 @@ describe Semverse::Version do
 
     context "when no pre-release value is set" do
       subject { described_class.new("1.2.3").pre_release? }
-      it { should be_false }
+      it { should be false }
     end
   end
 
@@ -317,17 +317,17 @@ describe Semverse::Version do
 
     context "major is not equal to 0" do
       subject { described_class.new("1.0.0").zero? }
-      it { should be_false }
+      it { should be false }
     end
 
     context "minor is not equal to 0" do
       subject { described_class.new("0.1.0").zero? }
-      it { should be_false }
+      it { should be false }
     end
 
     context "patch is not equal to 0" do
       subject { described_class.new("0.0.1").zero? }
-      it { should be_false }
+      it { should be false }
     end
   end
 
