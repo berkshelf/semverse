@@ -284,13 +284,13 @@ describe Semverse::Version do
     describe "::coerce" do
 
       it "coerces a String to a Version object" do
-        subject.coerce("1.0.0").should eql(subject.new("1.0.0"))
+        expect(subject.coerce("1.0.0")).to eql(subject.new("1.0.0"))
       end
 
       it "returns an object of the desired class without any additional processing" do
         version = subject.new("1.0.0")
         # we want object equality here to prove that the exact object was returned
-        subject.coerce(version).should equal(version)
+        expect(subject.coerce(version)).to equal(version)
       end
 
     end
@@ -335,7 +335,7 @@ describe Semverse::Version do
     subject { Semverse::Version.new("1.0.0-rc.1+build.1") }
 
     it "returns a string containing the major.minor.patch-pre_release+build" do
-      subject.to_s.should eq("1.0.0-rc.1+build.1")
+      expect(subject.to_s).to eq("1.0.0-rc.1+build.1")
     end
   end
 
