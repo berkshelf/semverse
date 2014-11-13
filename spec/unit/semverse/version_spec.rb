@@ -224,12 +224,12 @@ describe Semverse::Version do
 
     describe "::split" do
       it "returns an array containing 5 elements" do
-        expect(subject.split("1.2.0-alpha.1")).to have(5).items
+        expect(subject.split("1.2.0-alpha.1").size).to eq(5)
       end
 
       context "given a string only containing a major, minor and patch version" do
         it "returns an array containing 4 elements" do
-          expect(subject.split("1.2.3")).to have(5).items
+          expect(subject.split("1.2.3").size).to eq(5)
         end
 
         it "returns nil as fourth element" do
@@ -243,7 +243,7 @@ describe Semverse::Version do
 
       context "given a string only containing a major and minor version" do
         it "returns an array containing 4 elements" do
-          expect(subject.split("1.2")).to have(3).items
+          expect(subject.split("1.2").size).to eq(3)
         end
 
         it "returns 0 as the third element" do
@@ -257,7 +257,7 @@ describe Semverse::Version do
 
       context "given a string with only a major version" do
         it "returns an array containing 3 elements" do
-          expect(subject.split("1")).to have(3).items
+          expect(subject.split("1").size).to eq(3)
         end
 
         it "returns 0 as the second element" do
@@ -284,13 +284,13 @@ describe Semverse::Version do
     describe "::coerce" do
 
       it "coerces a String to a Version object" do
-        subject.coerce("1.0.0").should eql(subject.new("1.0.0"))
+        expect(subject.coerce("1.0.0")).to eql(subject.new("1.0.0"))
       end
 
       it "returns an object of the desired class without any additional processing" do
         version = subject.new("1.0.0")
         # we want object equality here to prove that the exact object was returned
-        subject.coerce(version).should equal(version)
+        expect(subject.coerce(version)).to equal(version)
       end
 
     end
@@ -300,34 +300,34 @@ describe Semverse::Version do
   describe "#pre_release?" do
     context "when a pre-release value is set" do
       subject { described_class.new("1.2.3-alpha").pre_release? }
-      it { should be_true }
+      it { should be true }
     end
 
     context "when no pre-release value is set" do
       subject { described_class.new("1.2.3").pre_release? }
-      it { should be_false }
+      it { should be false }
     end
   end
 
   describe "#zero?" do
     context "major, minor and patch are equal to 0" do
       subject { described_class.new("0.0.0").zero? }
-      it { should be_true }
+      it { should be true }
     end
 
     context "major is not equal to 0" do
       subject { described_class.new("1.0.0").zero? }
-      it { should be_false }
+      it { should be false }
     end
 
     context "minor is not equal to 0" do
       subject { described_class.new("0.1.0").zero? }
-      it { should be_false }
+      it { should be false }
     end
 
     context "patch is not equal to 0" do
       subject { described_class.new("0.0.1").zero? }
-      it { should be_false }
+      it { should be false }
     end
   end
 
@@ -335,7 +335,7 @@ describe Semverse::Version do
     subject { Semverse::Version.new("1.0.0-rc.1+build.1") }
 
     it "returns a string containing the major.minor.patch-pre_release+build" do
-      subject.to_s.should eq("1.0.0-rc.1+build.1")
+      expect(subject.to_s).to eq("1.0.0-rc.1+build.1")
     end
   end
 
