@@ -224,12 +224,12 @@ describe Semverse::Version do
 
     describe "::split" do
       it "returns an array containing 5 elements" do
-        expect(subject.split("1.2.0-alpha.1")).to have(5).items
+        expect(subject.split("1.2.0-alpha.1").size).to eq(5)
       end
 
       context "given a string only containing a major, minor and patch version" do
         it "returns an array containing 4 elements" do
-          expect(subject.split("1.2.3")).to have(5).items
+          expect(subject.split("1.2.3").size).to eq(5)
         end
 
         it "returns nil as fourth element" do
@@ -243,7 +243,7 @@ describe Semverse::Version do
 
       context "given a string only containing a major and minor version" do
         it "returns an array containing 4 elements" do
-          expect(subject.split("1.2")).to have(3).items
+          expect(subject.split("1.2").size).to eq(3)
         end
 
         it "returns 0 as the third element" do
@@ -257,7 +257,7 @@ describe Semverse::Version do
 
       context "given a string with only a major version" do
         it "returns an array containing 3 elements" do
-          expect(subject.split("1")).to have(3).items
+          expect(subject.split("1").size).to eq(3)
         end
 
         it "returns 0 as the second element" do
