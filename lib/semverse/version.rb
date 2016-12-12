@@ -17,13 +17,13 @@ module Semverse
       # @return [Array]
       def split(version_string)
         case version_string.to_s
-        when /^(\d+)\.(\d+)\.(\d+)(-([0-9a-z\-\.]+))?(\+([0-9a-z\-\.]+))?$/i
+        when /^v?(\d+)\.(\d+)\.(\d+)(-([0-9a-z\-\.]+))?(\+([0-9a-z\-\.]+))?$/i
           [ $1.to_i, $2.to_i, $3.to_i, $5, $7 ]
-        when /^(\d+)\.(\d+)\.(\d+)?$/
+        when /^v?(\d+)\.(\d+)\.(\d+)?$/
           [ $1.to_i, $2.to_i, $3.to_i ]
-        when /^(\d+)\.(\d+)?$/
+        when /^v?(\d+)\.(\d+)?$/
           [ $1.to_i, $2.to_i, 0 ]
-        when /^(\d+)$/
+        when /^v?(\d+)$/
           [ $1.to_i, 0, 0 ]
         else
           raise InvalidVersionFormat.new(version_string)
