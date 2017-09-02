@@ -537,7 +537,7 @@ describe Semverse::Constraint do
     end
 
     %w[~> ~].each do |operator|
-      describe "aproximately (#{operator})" do
+      describe "approximately (#{operator})" do
         context "when the last value in the constraint is for minor" do
           subject { Semverse::Constraint.new("#{operator} 1.2") }
 
