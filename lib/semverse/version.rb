@@ -3,7 +3,7 @@ module Semverse
     class << self
       # Coerce the object into a version.
       #
-      # @param [Version, String]
+      # @param [Version, String] object
       #
       # @return [Version]
       def coerce(object)
