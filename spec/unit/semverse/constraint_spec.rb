@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 RSpec::Matchers.define :satisfies do |*args|
   match do |constraint|
@@ -49,9 +49,9 @@ describe Semverse::Constraint do
 
       context "given a string that does not match the Constraint REGEXP" do
         it "raises an InvalidConstraintFormat error" do
-          expect {
+          expect do
             subject.new(invalid_string)
-          }.to raise_error(Semverse::InvalidConstraintFormat)
+          end.to raise_error(Semverse::InvalidConstraintFormat)
         end
       end
 
@@ -253,9 +253,9 @@ describe Semverse::Constraint do
         let(:constraint_string) { "x23u7089213.*" }
 
         it "raises an InvalidConstraintFormat error" do
-          expect {
+          expect do
             subject.split(invalid_string)
-          }.to raise_error(Semverse::InvalidConstraintFormat)
+          end.to raise_error(Semverse::InvalidConstraintFormat)
         end
       end
 
@@ -536,7 +536,7 @@ describe Semverse::Constraint do
       it { should_not satisfies("2.0.0") }
     end
 
-    %w[~> ~].each do |operator|
+    %w{~> ~}.each do |operator|
       describe "approximately (#{operator})" do
         context "when the last value in the constraint is for minor" do
           subject { Semverse::Constraint.new("#{operator} 1.2") }
@@ -699,12 +699,12 @@ describe Semverse::Constraint do
     end
 
     context "when the constraint does not contain a build value" do
-      let(:constraint_string) { ">= 1.2.0-alpha"}
+      let(:constraint_string) { ">= 1.2.0-alpha" }
       it { should eq(constraint_string) }
     end
 
     context "when the constraint contains a pre_release value" do
-      let(:constraint_string) { ">= 1.2.0+123"}
+      let(:constraint_string) { ">= 1.2.0+123" }
       it { should eq(constraint_string) }
     end
   end

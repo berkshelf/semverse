@@ -75,12 +75,13 @@ module Semverse
     #
     # @return [Integer]
     def <=>(other)
-      [:major, :minor, :patch].each do |release|
-        ans = self.send(release) <=> other.send(release)
+      %i{major minor patch}.each do |release|
+        ans = send(release) <=> other.send(release)
         return ans if ans != 0
       end
       ans = pre_release_and_build_presence_score <=> other.pre_release_and_build_presence_score
       return ans if ans != 0
+
       ans = identifiers_comparaison(other, :pre_release)
       return ans if ans != 0
       if build && other.build
@@ -88,12 +89,11 @@ module Semverse
       else
         return build.to_s <=> other.build.to_s
       end
-      0
     end
 
     # @return [Array]
     def identifiers(release)
-      send(release).to_s.split('.').map do |str|
+      send(release).to_s.split(".").map do |str|
         str.to_i.to_s == str ? str.to_i : str
       end
     end
@@ -108,7 +108,11 @@ module Semverse
 
     # @return [Integer]
     def pre_release_and_build_presence_score
-      pre_release ? 0 : (build.nil? ? 1 : 2)
+      if pre_release
+        0
+      else
+        build.nil? ? 1 : 2
+      end
     end
 
     # @param [Semverse::Version] other
@@ -136,7 +140,7 @@ module Semverse
     end
 
     def inspect
-      "#<#{self.class.to_s} #{to_s}>"
+      "#<#{self.class} #{self}>"
     end
 
     def to_s

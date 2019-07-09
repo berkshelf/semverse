@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Semverse::Version do
   describe "ClassMethods" do
@@ -21,11 +21,11 @@ describe Semverse::Version do
         end
 
         it "assigns a pre_release value" do
-          expect(@version.pre_release).to eq('rc.1')
+          expect(@version.pre_release).to eq("rc.1")
         end
 
         it "assigns a build value" do
-          expect(@version.build).to eq('build.1')
+          expect(@version.build).to eq("build.1")
         end
       end
 
@@ -49,7 +49,7 @@ describe Semverse::Version do
         end
 
         it "assigns a build value" do
-          expect(@version.build).to eq('pre-build.11.e0f985a')
+          expect(@version.build).to eq("pre-build.11.e0f985a")
         end
       end
 
@@ -78,7 +78,7 @@ describe Semverse::Version do
       end
 
       context "a five element array" do
-        before(:each) { @version = subject.new([1,2,3,nil,'build.1']) }
+        before(:each) { @version = subject.new([1, 2, 3, nil, "build.1"]) }
 
         it "assigns a major value" do
           expect(@version.major).to eq(1)
@@ -97,12 +97,12 @@ describe Semverse::Version do
         end
 
         it "assigns a build value" do
-          expect(@version.build).to eq('build.1')
+          expect(@version.build).to eq("build.1")
         end
       end
 
       context "a four element array" do
-        before(:each) { @version = subject.new([1,2,3,'alpha.1']) }
+        before(:each) { @version = subject.new([1, 2, 3, "alpha.1"]) }
 
         it "assigns a major value" do
           expect(@version.major).to eq(1)
@@ -117,7 +117,7 @@ describe Semverse::Version do
         end
 
         it "assigns a pre_release value" do
-          expect(@version.pre_release).to eq('alpha.1')
+          expect(@version.pre_release).to eq("alpha.1")
         end
 
         it "doesn't assigns a build value" do
@@ -126,7 +126,7 @@ describe Semverse::Version do
       end
 
       context "a three element array" do
-        before(:each) { @version = subject.new([1,2,3]) }
+        before(:each) { @version = subject.new([1, 2, 3]) }
 
         it "assigns a major value" do
           expect(@version.major).to eq(1)
@@ -150,7 +150,7 @@ describe Semverse::Version do
       end
 
       context "a two element array" do
-        before(:each) { @version = subject.new([1,2]) }
+        before(:each) { @version = subject.new([1, 2]) }
 
         it "assigns a major value" do
           expect(@version.major).to eq(1)
@@ -198,7 +198,7 @@ describe Semverse::Version do
       end
 
       context "an empty array" do
-        before(:each) { @version = subject.new(Array.new) }
+        before(:each) { @version = subject.new([]) }
 
         it "sets the majro value to 0 (zero)" do
           expect(@version.major).to eq(0)
@@ -273,11 +273,11 @@ describe Semverse::Version do
         end
       end
 
-    context "given a string with an invalid version"
+      context "given a string with an invalid version"
       it "raises an InvalidVersionFormat error" do
-        expect {
+        expect do
           subject.split("hello")
-        }.to raise_error(Semverse::InvalidVersionFormat)
+        end.to raise_error(Semverse::InvalidVersionFormat)
       end
     end
 
@@ -341,7 +341,7 @@ describe Semverse::Version do
 
   describe "#<=>" do
     it "compares versions" do
-      versions_list = %w[
+      versions_list = %w{
         1.0.0-0
         1.0.0-alpha
         1.0.0-alpha.1
@@ -354,14 +354,12 @@ describe Semverse::Version do
         1.0.0+build
         1.0.0+build.2.b8f12d7
         1.0.0+build.11.e0f985a
-      ]
+      }
       versions = versions_list.map { |version| Semverse::Version.new(version) }
 
       100.times do
         shuffled_versions = versions.shuffle
-        while shuffled_versions == versions
-          shuffled_versions = shuffled_versions.shuffle
-        end
+        shuffled_versions = shuffled_versions.shuffle while shuffled_versions == versions
         expect(shuffled_versions.sort.map(&:to_s)).to eq(versions_list)
       end
     end
