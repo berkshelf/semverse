@@ -23,7 +23,7 @@ group :development do
 end
 
 # bundler is built into Ruby 2.6 and later
-if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.6')
+if Gem::Version.new(RUBY_VERSION) < Gem::Version.new("2.6")
   gem "bundler", "~> 1.5"
 end
 

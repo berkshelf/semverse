@@ -97,18 +97,18 @@ module Semverse
       def compare_approx(constraint, target_version)
         min = constraint.version
         max = if constraint.patch.nil?
-          Version.new([min.major + 1, 0, 0, 0])
-        elsif constraint.build
-          identifiers = constraint.version.identifiers(:build)
-          replace     = identifiers.last.to_i.to_s == identifiers.last.to_s ? "-" : nil
-          Version.new([min.major, min.minor, min.patch, min.pre_release, identifiers.fill(replace, -1).join('.')])
-        elsif constraint.pre_release
-          identifiers = constraint.version.identifiers(:pre_release)
-          replace     = identifiers.last.to_i.to_s == identifiers.last.to_s ? "-" : nil
-          Version.new([min.major, min.minor, min.patch, identifiers.fill(replace, -1).join('.')])
-        else
-          Version.new([min.major, min.minor + 1, 0, 0])
-        end
+                Version.new([min.major + 1, 0, 0, 0])
+              elsif constraint.build
+                identifiers = constraint.version.identifiers(:build)
+                replace = identifiers.last.to_i.to_s == identifiers.last.to_s ? "-" : nil
+                Version.new([min.major, min.minor, min.patch, min.pre_release, identifiers.fill(replace, -1).join(".")])
+              elsif constraint.pre_release
+                identifiers = constraint.version.identifiers(:pre_release)
+                replace = identifiers.last.to_i.to_s == identifiers.last.to_s ? "-" : nil
+                Version.new([min.major, min.minor, min.patch, identifiers.fill(replace, -1).join(".")])
+              else
+                Version.new([min.major, min.minor + 1, 0, 0])
+              end
         min <= target_version && target_version < max
       end
     end
@@ -116,7 +116,7 @@ module Semverse
     # The default constraint string.
     #
     # @return [String]
-    DEFAULT_OPERATOR = '='.freeze
+    DEFAULT_OPERATOR = "=".freeze
 
     # The complete list of possible operators, paired with a proc to be used for
     # evaluation.
@@ -126,14 +126,14 @@ module Semverse
     #
     # @return [Hash<String, Proc>]
     OPERATORS = { #:nodoc:
-      '='  => ->(c, v) { v == c.version },
-      '!=' => ->(c, v) { v != c.version },
-      '>'  => ->(c, v) { v >  c.version },
-      '<'  => ->(c, v) { v <  c.version },
-      '>=' => ->(c, v) { v >= c.version },
-      '<=' => ->(c, v) { v <= c.version },
-      '~'  => method(:compare_approx),
-      '~>' => method(:compare_approx),
+      "=" => ->(c, v) { v == c.version },
+      "!=" => ->(c, v) { v != c.version },
+      ">" => ->(c, v) { v >  c.version },
+      "<" => ->(c, v) { v <  c.version },
+      ">=" => ->(c, v) { v >= c.version },
+      "<=" => ->(c, v) { v <= c.version },
+      "~" => method(:compare_approx),
+      "~>" => method(:compare_approx),
     }.freeze
 
     # This is a magical regular expression that matches the Semantic versioning
@@ -165,24 +165,24 @@ module Semverse
     attr_reader :version
 
     # @param [#to_s] constraint
-    def initialize(constraint = '>= 0.0.0')
+    def initialize(constraint = ">= 0.0.0")
       constraint = constraint.to_s
       if constraint.nil? || constraint.empty?
         constraint = ">= 0.0.0"
       end
       @operator, @major, @minor, @patch, @pre_release, @build = self.class.split(constraint)
 
-      unless ['~>', '~'].include?(@operator)
+      unless ["~>", "~"].include?(@operator)
         @minor ||= 0
         @patch ||= 0
       end
 
       @version = Version.new([
-        self.major,
-        self.minor,
-        self.patch,
-        self.pre_release,
-        self.build,
+        major,
+        minor,
+        patch,
+        pre_release,
+        build,
       ])
     end
 
@@ -195,7 +195,7 @@ module Semverse
     def satisfies?(target)
       target = Version.coerce(target)
 
-      if !version.zero? && greedy_match?(target)
+      if !version.zero? && greedy_match?(target) # rubocop:disable Style/NumericPredicate
         return false
       end
 
@@ -211,8 +211,8 @@ module Semverse
     # @return [Boolean]
     def ==(other)
       other.is_a?(self.class) &&
-        self.operator == other.operator &&
-        self.version == other.version
+        operator == other.operator &&
+        version == other.version
     end
     alias_method :eql?, :==
 
@@ -220,7 +220,7 @@ module Semverse
     #
     # @return [String]
     def inspect
-      "#<#{self.class.to_s} #{to_s}>"
+      "#<#{self.class} #{self}>"
     end
 
     # The string representation of this constraint.
@@ -243,10 +243,10 @@ module Semverse
       #
       # @param [Semverse::Version] target_version
       #
-      def greedy_match?(target_version)
-        !['<', '<='].include?(self.operator) &&
+    def greedy_match?(target_version)
+      !["<", "<="].include?(operator) &&
         target_version.pre_release? &&
         !version.pre_release?
-      end
+    end
   end
 end
