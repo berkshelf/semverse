@@ -3,7 +3,7 @@ module Semverse
     class << self
       # Coerce the object into a constraint.
       #
-      # @param [Constraint, String]
+      # @param [Constraint, String] object
       #
       # @return [Constraint]
       def coerce(object)
