@@ -1,4 +1,3 @@
-sudo: false
 language: ruby
 cache: bundler
 bundler_args: --without development
@@ -6,8 +5,8 @@ matrix:
   include:
     - rvm: 2.2.10
     - rvm: 2.3.8
-    - rvm: 2.4.5
-    - rvm: 2.5.3
+    - rvm: 2.4.6
+    - rvm: 2.5.5
     - rvm: 2.6
     - rvm: ruby-head
   allow_failures:
