@@ -4,13 +4,13 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "semverse/gem_version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "semverse"
+  spec.name          = "chef-testing"
   spec.version       = Semverse::VERSION
   spec.authors       = ["Jamie Winsor"]
   spec.email         = ["jamie@vialstudios.com"]
   spec.summary       = %q{An elegant library for representing and comparing SemVer versions and constraints}
   spec.description   = spec.summary
-  spec.homepage      = "https://github.com/berkshelf/semverse/"
+  spec.homepage      = "https://github.com/chef/semverse/"
   spec.license       = "Apache-2.0"
 
   spec.files         = %w{LICENSE} + Dir.glob("lib/**/*")
