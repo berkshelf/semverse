@@ -1,5 +1,3 @@
-# Documentation available at https://expeditor.chef.io/docs/getting-started/
----
 project:
   alias: chef-semverse
 
