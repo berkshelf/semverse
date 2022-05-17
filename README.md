@@ -38,4 +38,3 @@ TODO: Write usage instructions here
 
 [gem]: https://rubygems.org/gems/semverse
 [travis]: http://travis-ci.org/berkshelf/semverse
-
