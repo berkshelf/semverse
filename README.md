@@ -26,7 +26,17 @@ $ gem install semverse
 
 ## Usage
 
-TODO: Write usage instructions here
+Create a new `Version` object:
+
+```
+Semverse::Version.new('1.2.3')
+```
+
+Create a new `Constraint` object:
+
+```
+Semverse::Constraint.new('>1.4.3')
+```
 
 ## Contributing
 
